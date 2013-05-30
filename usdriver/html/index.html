@@ -1,0 +1,399 @@
+<html>
+<head>
+<title>The ULTRASPEC Java client/server, version 1.0.0</title>
+</head>
+
+<body>
+
+<h1>The ULTRASPEC Java client/server, version 1.0.0</h1>
+
+<p>
+ULTRASPEC, which is based on ULTRACAM, is operated by sending commands to its servers which listen
+on several ports. <strong>usdriver</strong> is a program to do this. 
+Some of the commands send XML files which define multiple properties. These are
+known as 'applications'.
+
+<p>
+<strong>usdriver</strong> does the following:
+<ul>
+
+<li> Defines the XML application files which are used to drive ULTRASPEC. The setup is done from a GUI.
+
+<li> Allows some user-defined information can be added, such as target name,
+filters, grating.
+
+<li> Allows the applications to be loaded from and saved to local disk files.
+
+<li> Acts as a server for 'rtplot' so that the latter can grab the current set of windows.
+
+<li> Posts XML applications and other commands to the ultraspec camera and data servers
+
+</ul>
+
+<h2>Index</h2>
+
+<ul>
+<li> <a href="#installation">Installing the software</a>
+<li> <a href="#structure">Basic structure of Usdriver</a>
+<li> <a href="#configuration">Configuration file</a>
+<li> <a href="#settings">Settings menu</a>
+<li> <a href="#numerical">Numerical parameter input</a>
+<li> <a href="#expert">Expert mode</a>
+<li> <a href="#setup">The setup and observing panels</a>
+<li> <a href="#windows">Window parameters panel</a>
+<li> <a href="#trouble">Trouble-shooting</a>
+</ul>
+
+<h2><a name="installation">Installing the software</a></h2>
+
+<p>
+If you already have <strong>usdriver</strong> installed, check the version number and then
+look at this <a href="CHANGES.html">list of changes</a> to see if you
+need to update it.
+
+<p>
+If you have not installed it before, as long as you have Java version 1.4 or later available (so that the system
+recognises the commands 'java', 'javac' and 'jar'), installation
+should be straightforward (on UNIX systems that is). Download the file <a
+href="http://deneb.astro.warwick.ac.uk/phsaap/software/usdriver.tar.gz">usdriver.tar.gz</a>
+(always the most up-to-date version), 'tar xvfz' it. It will create a directory
+such as usdriver-1.0.0; cd to it, and type 'make'. If that works and the script
+it generates works, then define an environment variable TRM_JAVA to point at 
+a directory to install, and then type 'make install'.
+
+<p>
+At the end of the installation, you will be told how to run the software;
+you may want to define an alias. Note that the make also defines an alias
+for a directory such as usdriver-1.0.0 == usdriver so that you can define
+an alias that always points to the most recently installed version.
+
+<h2><a name="structure">Basic structure</a></h2>
+
+<p>
+<strong>usdriver</strong> works around a
+basis set of "template applications" and allows you to change a subset of the
+parameters of these. At the moment there is only one such application and
+so you never even get a choice. This is the ccd201_winbin application which
+allows one or two windows. When either you post
+or save the application, <strong>usdriver</strong> finds the "4 windows" template, loads it,
+edits it to match your choices and then continues. This places an installation 
+onus on getting the template files right, and in the right place, but allows one
+to switch quickly between different applications with the same sets of windows.
+In this sense it is window-centred rather than application centred and is meant
+to reflect the way one thinks at a telescope more. 
+
+
+<h2><a name="configuration">Configuration file</a></h2>
+
+<p>
+Once you have installed and used the software, you may want to customise its
+behaviour on startup. Many aspects of <strong>usdriver</strong> can be defined using an ASCII configuration
+file. The file is called <a href="usdriver.conf">usdriver.conf</a> and 
+is kept along with the <i>usdriver</i> script in the installation 
+directory's bin sub-directory. Several aspects set by the config file can be
+altered as the program is run in its <strong>Settings</strong> menu,
+but you may sometimes prefer to alter the configuration file so that a
+particular behaviour is there as soon as you start. For instance, if you are
+not observing, you might want to set the ULTRACAM servers to be <strong>off</strong>.
+
+<p>
+<a href="usdriver.conf">usdriver.conf</a> is written in ASCII and is
+self-explanatory. By default the program looks for the configuration file in the
+same directory as the program is stored in. You can override this behaviour by
+invoking the script in the following manner
+<pre>
+usdriver full_path_to_an_alternative_config_file
+</pre>
+(assuming that you have defined the usdriver alias as suggested above). Do not use
+a relative path to the file because the script runs the program from the
+directory containing it, not the working directory.
+
+<h2><a name="settings">Settings menu</a></h2>
+
+<p>
+This menu contains a set of switches that can be toggled on and off to vary how
+the program varies. Their initial values are set in the configuration file.
+'Expert mode' is described in more detail below. 'Templates from server' means
+that the template files used to define the different modes are taken from a
+standard location on the machine hosting the server (i.e. the rack PC when
+observing) rather than from local copies. This should be slightly safer. The
+local option is really for development and testing purposes; if the server is
+being used, many other files are still retrieved from a standard location 
+on the server whether or not you check this flag.
+
+<p>
+'ULTRACAM servers on' indicates that the data and camera servers exist. It does
+not turn them on and off. All commands which deal with the servers will be
+disabled if this is toggled off.
+
+<p>
+'File logging' means that the more useful of the items that appear in the
+lower-left information panel will be saved to disk as an html file. This is
+a potentially useful store of information. I recommend that it is always
+switched on during observing. When you switch it on, you get the chance to 
+choose the file name.
+
+<p>
+'Show responses as text' just refers to the way the XML responses from the server
+are displayed in the lower-right panel. They can either be shown as text or in
+tree form.
+
+<p>
+'Confirm target name' is a safety device to increase the chances that you have
+entered the right target name, as it is fairly important that you get it right.
+The idea is that if the settings have changed without the target name changing, then
+you will be asked to confirm that the target name is OK.
+
+<h2><a name="expert">Expert mode</a></h2>
+
+<p>
+For safety, certain commands enable or disable other commands. Thus,
+you will not be able to start an exposure until you have posted it,
+or stop one until you have started it. These controls have the
+potential to get in the way, although with ULTRACAM at least, this 
+has not occurred, and so there is a no-holds-barred
+"Expert" mode which will allow you to do anything you like, with
+some potential for disaster.
+
+<h2><a name="setup">Setup & Observing panels</a></h2>
+
+<p>
+These are two panels on the left-hand side that can be flipped between by
+clicking on named tabs.  They group the commands into the ones used to set
+ULTRASPEC up and the ones that are used during observing when everything is going
+OK. 
+
+<h3>Observing panel</h3>
+
+<p>
+This is the main panel to be used during observing. 
+It has the following commands:
+
+<p>
+<table>
+
+<tr>
+<td><i>Load application</i></td>
+<td>This loads window settings from a disk file. This will change the
+settings of the top right panel. The values can be immediately be
+changed.</td>
+</tr>
+
+<tr>
+<td><i>Save application</i></td>
+<td>This writes the current window settings to disk. If you have used
+the settings for a run, saving them will then make it possible to edit
+the settings which will otherwise be frozen. This is a safety
+precaution to ensure that all settings used are saved.
+</td>
+</tr>
+
+<tr>
+<td><i>Unfreeze application</i></td>
+<td>In non-expert mode, the window settings are frozen when they have been used for a run
+and can only be unfrozen by saving them to disk, or, as a quick fix, by pressing
+this button. The freezing is there for a reason so during observing you should
+be saving applications rather than using this button.
+</td>
+</tr>
+
+<tr>
+<td><i>Sync windows</i></td>
+<td>When you bin the CCD, then it is possible to have identically
+binned windows which are nevertheless out of step with each other. For
+instance one window may have xbin=2, with unbinned pixels 4-5, 6-7,
+8-9 etc ending up added together, while another may have 3-4, 5-6, 7-8
+etc. These two windows are incompatible for adding together etc. In addition,
+with ULTRASPEC, although it is not enforced, one would normally want the xstart
+and nx values to be the same. To help make sure that you DO use
+compatible windows, the 'sync windows' button will be highlighted in
+orange whenever you choose incompatible settings with a standard
+setting for your chosen binning factors. Pressing it will immediately 
+adjust the windows so that this is the case, or you can just adjust
+the windows until the button is no longer highlighted. 
+</td>
+</tr>
+
+<tr>
+<td><i>Post application</i></td>
+<td>Before starting a run, the settings must be posted to the servers
+using this button. In non-expert mode, the start button will be
+disabled until this is pressed.
+</td>
+</tr>
+
+<tr>
+<td><i>Start exposure</i></td>
+<td>This starts an exposure and will start exposure and disk space
+timers in the panel below. In non-expert mode, this will also enable
+the stop button.
+</td>
+</tr>
+
+<tr>
+<td><i>Stop exposure</i></td>
+<td>This stops whatever exposure is going.
+</td>
+</tr>
+
+</table>
+
+<h3>Setup panel</h3>
+
+<p>
+This comes in two forms, expert and non-expert. The expert commands
+are listed in the order that they should be carried out. They are
+
+<p>
+<table>
+
+<tr>
+<td><i>Reset SDSU</i></td>
+<td>This sends the command 'RCO' to the 
+camera server to reset the SDSU controller.</td>
+</tr>
+
+<tr>
+<td><i>Reset PCI board</i></td>
+<td>This sends the command 'RST' to the 
+camera server to reset the PCI board.</td>
+</tr>
+
+<tr>
+<td><i>Setup the servers</i></td>
+<td>This sends setup applications to the camera and data servers. The
+XML responses will be sent to the lower-right information panel.
+</td>
+</tr>
+
+<tr>
+<td><i>Power on</i></td>
+<td>This executes the power on application, and then sends the 'GO'
+command to run it.
+</td>
+</tr>
+
+</table>
+
+<p>
+In non-expert mode, the commands are <strong>Initialise</strong>,
+which combines the first four of the commands above in one sequence,
+and <strong>Reset</strong> which combines the two reset commands.
+
+<h2><a name="windows">Window parameters panel</a></h2>
+
+<p>
+The panel on the top-right defines all the settings needed to run
+ULTRASPEC. If there are ever more than one basic application type, then there
+would be a menu of them at the top. Following this, or heading the list when
+there is no such menu, comes a little drop-down list defining the CCD output, (normal output
+or the avalanche gain output). If you select the avalance gain, then you can
+set it from 0 (none) to 9 (max). Then comes a readout speed selector, whether
+you want to clear the chip, a setting for the internal LED and then parameters
+to define the windows and the exposure. Below these are text inputs which are
+written to the XML file for the run as crude headers. 
+The numerical fields have several features which it is worth knowing.
+
+<h2><a name="numerical">Numerical parameter input</a></h2>
+
+<p>
+The parameter values defining the windows are entered on the right-hand part of
+the GUI; see <a href="screenshot1.jpg">this screenshot</a>. You do
+<strong>NOT</strong> have to hit 'enter' to register values. Instead the values
+shown in the GUI are always the values that will be used if you save or post an
+application.  A process runs which checks the current window parameters every
+second and estimates timing parameters from them which are displayed in
+the right-hand side. This process will also flag any problem values that lead to
+invalid window settings. If such problems are flagged, then you will not be
+able to send anything to the cameras.
+
+<p>
+The numerical parameters support the following features:
+<ul>
+
+<li> Minimum and maximum values. You will not be allowed to set a value
+outside this range. Hit the middle mouse button when on a field to see
+its allowed range.
+
+<li> Increment and decrement using the up & down arrow keys and the
+left and right mouse buttons.
+
+<li> 'Focus-follows-mouse' behaviour, i.e. as soon as you move the mouse
+onto a field, you can start to edit it. This means that you do not have to click
+the mouse on a field, so that clicking always implies an increment/decrement operation.
+
+<li> Automatic continuous increment / decrement by holding down the
+respective arrow keys or mouse buttons. 
+
+<li> Acceleration of the automatic changes by a factor of 10 by holding down the SHIFT key at
+the same time, and by a factor of 50 by holding down both the SHIFT and
+CTRL keys.
+
+</ul>
+
+<h2><a name="trouble">Troubleshooting</a></h2>
+
+<p>
+The GUI attempts to work out which commands are possible, e.g. to prevent you
+sending 'start run' twice in a row to the servers. It is possible that it will 
+get confused, with the result that it might prevent you from
+doing something that you know to be possible. To get round this, switch to
+'Expert mode' (can be set in the configuration file or from the 'Settings' menu)
+which will remove all safety checks. Once you have managed to execute the command
+you want, it should be possible to switch back into the checked,
+non-expert mode and carry on.
+
+<p>
+A related feature is that you may find that sometimes all of the
+windows settings buttons are disabled. This occurs when you have used a given
+setup to make a run but have not saved it to disk. Because it could be
+useful to be able to recover the setup for a run, this is a safety
+measure to ensure that you do save all setups. Again, this check is
+removed in expert mode and a temporary side-step around having to save
+it can be made if you As it is potentially annoying
+however, this behaviour is configurable both in the configuration file
+or through the settings menu.
+
+<p>
+It is important to understand that the client <strong>is not</strong> ULTRASPEC.
+It merely sends information to and receives data back from the ULTRASPEC servers
+using http requests.  Thus you can CTRL-C or hit the exit button and ULTRASPEC
+will carry on unchanged.  e.g. it could carry on exposing. If you did quit the
+client for some reason, when re-started the client will start in a default
+state that may not represent the state you know ULTRASPEC to be in. For instance,
+you may know that ULTRACAM is set up and want to post an application, but the
+client won't let you. It is therefore very likely that you should switch to
+'Expert mode' in such circumstances. This will allow you send any command,
+including ones that should <strong>not</strong> be sent, so take care. As said
+above, as soon as you have successfully executed a command in expert mode,
+everything should be back to normal, and you can switch back to checked mode
+once more. This also means that should you be controlling ULTRASPEC from a
+machine that goes down, but you think that the rack PC and ULTRASPEC are still
+running, then as long as you have another machine with
+<strong>usdriver</strong> installed which can talk to the rack PC over the
+network, then you should be able to control ULTRASPEC using it. Again you almost
+certainly need to start in 'expert mode', e.g. so that you can stop an
+exposure. You could also have two such clients running at the same time (but not
+on the same machine unless you change the port used for the rtplot server).
+
+<p>
+Therefore when observing, it is a good idea to install the client on all
+laptops (running in expert mode by default) as well as the ULTRASPEC data PC 
+in case the latter falls over, as it has done in the past. Similarly, it would 
+a seaman-like precaution always to have a laptop connected to the rack PC while 
+observing.
+
+<p>
+Finally the nature of the client means that it is possible to alter
+parameters while an exposure is running with no ill effect. ULTRASPEC will only
+have its windows set up when you have posted the application. In the non-expert
+mode, you will not be allowed to post an application while an exposure is taking
+place.
+
+<p>
+<hr>
+<address>
+Tom Marsh, Warwick
+</address>
+</body>
+</html>

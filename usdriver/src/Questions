@@ -1,0 +1,9 @@
+
+my ccd201 application is possibly out of date.
+
+1) Does the current one include a GAIN parameter?
+   It does not appear in the output xml
+
+2) Does it include a SPEED parameter?
+
+3) what is the role of 'ultracam.xml'

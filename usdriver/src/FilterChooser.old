@@ -1,0 +1,143 @@
+package warwick.marsh.ultracam.usdriver;
+
+import java.lang.Void;
+import javax.swing.*;
+import javax.swing.text.*;
+
+import java.awt.*;              //for layout managers and more
+import java.awt.event.*;        //for action events
+
+
+public class FilterChooser extends JFrame
+        implements ActionListener {
+    
+    // Colours and Fonts
+    public static final Color DEFAULT_COLOUR    = new Color(220, 220, 255);
+    public static final Color SEPARATOR_BACK    = new Color(100, 100, 100);
+    public static final Color SEPARATOR_FORE    = new Color(150, 150, 200);
+    public static final Color LOG_COLOUR        = new Color(240, 230, 255);
+    public static final Color ERROR_COLOUR      = new Color(255, 0,   0  );
+    public static final Color WARNING_COLOUR    = new Color(255, 100, 0  );
+    public static final Color GO_COLOUR         = new Color(0,   255, 0  );
+    public static final Color STOP_COLOUR       = new Color(255, 0,   0  );
+    public static final Font DEFAULT_FONT = new Font("Dialog", Font.BOLD, 12);
+
+    private static String[] myNames=null;
+    private static String[] myIDS=null;
+    private static String[] chosenFilts=null;
+
+    private static final int nPos = 6;
+    private JComboBox[] combos = new JComboBox[nPos];
+    private JLabel[]    labels = new JLabel[nPos]; 
+    private JButton setButton;
+    private JButton cancelButton;
+
+    // Use this a fair bit, so just make one
+    private static GridBagLayout gbLayout = new GridBagLayout();
+
+    // Method for adding components to GridBagLayout for the window panel
+    private static void addComponent (Container cont, Component comp, int gridx, int gridy, 
+				      int gridwidth, int gridheight, int fill, int anchor){
+
+	GridBagConstraints gbc = new GridBagConstraints ();
+	gbc.gridx      = gridx;
+	gbc.gridy      = gridy;
+	gbc.gridwidth  = gridwidth;
+	gbc.gridheight = gridheight;
+	gbc.fill       = fill;
+	gbc.anchor     = anchor;
+	gbLayout.setConstraints(comp, gbc);
+	cont.add (comp);
+    }
+
+    public FilterChooser(String[] names, String[] IDS){
+	myNames = names;
+	myIDS   = IDS;
+	initComponents();
+	setVisible(true);
+    }
+
+    private void initComponents() {
+	// Make sure that any way the user cancels the window does the right thing
+	addWindowListener(
+			  new WindowAdapter() {
+			      public void windowClosing(WindowEvent e) {
+				  closeAndCancel();
+			      }
+			  }
+			  );
+	
+	setTitle("ULTRASPEC filter chooser");
+	setResizable(true);
+	setSize(180,280);
+	setButton = new JButton();
+	cancelButton = new JButton();
+	for(int i=0; i< nPos; i++){
+	    labels[i] = new JLabel();
+	    labels[i].setText(Integer.toString(i+1));
+	}
+	for(int i=0; i<nPos; i++){
+	    combos[i] = new JComboBox(myNames);
+	}
+
+	setButton.setText("Set");
+	cancelButton.setText("Cancel");
+	setButton.setActionCommand("Set");
+	cancelButton.setActionCommand("Cancel");
+	setButton.addActionListener(this);
+	cancelButton.addActionListener(this);
+	setButton.setBackground(GO_COLOUR);
+	cancelButton.setBackground(STOP_COLOUR);
+
+	Container container = this.getContentPane();
+	container.setBackground(DEFAULT_COLOUR);
+	container.setLayout(gbLayout);
+
+	JLabel h1 = new JLabel("Pos");
+	JLabel h2 = new JLabel("Filter");
+
+	// now add components
+	// headers
+	addComponent(container, h1, 0, 0, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+	addComponent(container, Box.createHorizontalStrut(15), 1, 0, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+	addComponent(container, h2, 2, 0, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+
+	// vertical space
+	addComponent(container, Box.createVerticalStrut(15), 0, 1, 3, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+
+	// labels and drop down boxes
+	int ypos=2;
+	for(int i=0; i<nPos; i++){
+	    addComponent(container, labels[i], 0, ypos, 1, 1,GridBagConstraints.NONE, GridBagConstraints.WEST);
+	    addComponent(container, Box.createHorizontalStrut(15), 1, ypos, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
+	    addComponent(container, combos[i], 2, ypos++, 1, 1,GridBagConstraints.NONE, GridBagConstraints.WEST);
+	}
+
+    }
+    
+    public void actionPerformed(ActionEvent e){
+	if(e.getActionCommand().equals("Set")){
+	    closeAndSave();
+	}else if(e.getActionCommand().equals("Cancel")){
+	    closeAndCancel();
+	}
+    }
+
+    public String[] getFilts(){
+	return chosenFilts;
+    }
+
+    public void closeAndSave(){
+	for(int i=0; i<nPos; i++){
+	    chosenFilts[i] = combos[i].getSelectedItem()+"";
+	}
+	setVisible(false);
+    }
+
+    public void closeAndCancel(){
+	chosenFilts = null;
+	setVisible(false);
+    }
+    
+
+}

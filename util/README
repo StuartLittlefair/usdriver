@@ -1,0 +1,9 @@
+
+The 'util' classes are those of general use for other packages.
+It should be built before they are. To do so, cd to the src
+directory and type 'make'. As util is only used when other applications
+use it, there is no 'make install'.
+
+TRM
+
+12/11/06

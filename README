@@ -1,0 +1,6 @@
+To install:
+
+export TRM_JAVA="/usr/local"
+make
+make install
+

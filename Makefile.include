@@ -1,0 +1,60 @@
+# Makefile.include
+# This file is included in the Makefiles located in the source
+# directories along with the java files
+
+# The following must be set by the indidual Makefile:
+#
+# TOP_DIR      path to get from the local directory to the top-level one where the classes are stored
+# PACKAGE_PATH the package dir path, without trailing '/'
+#
+# Optionally you can set FILES to be java files that you wish to compile first
+# before others; they must be files present in $(PACKAGE_PATH); do not add the
+# directory path to them.
+#
+# Finally 'JFLAGS' are compiler flags
+
+# Directory for the compiled classes
+CLASS_DIR       = $(TOP_DIR)/classes
+LOCAL_CLASS_DIR = $(CLASS_DIR)/$(PACKAGE_PATH)
+
+# compiler field
+JAVAC           = javac
+JAR             = jar
+JAVADOC         = javadoc
+JAVA            = java
+
+#JDIR = /usr/lib/jvm/java-1.4.2-sun/bin
+
+#JAVAC           = $(JDIR)/javac
+#JAR             = $(JDIR)/jar
+#JAVADOC         = $(JDIR)/javadoc
+#JAVA            = $(JDIR)/java
+
+# nothing should be changed below...
+#
+
+# find out target files searching down to the package and then strips off directory part
+#FILES += $(notdir $(wildcard $(PACKAGE_PATH)/*.java))
+FILES += $(wildcard *.java)
+
+all: $(CLASS_DIR) $(FILES:.java=.class)
+
+# create target class dir if not present.
+$(CLASS_DIR):
+	mkdir -p $(CLASS_DIR)
+	@echo "Created class directory = $(CLASS_DIR)"
+
+# Tell make to find class files in another dir. This takes account of 
+# javac sticking the class files down the package hierarchy and prevents
+# needless recompilation
+
+vpath %.class $(LOCAL_CLASS_DIR)
+
+# compilation command
+
+%.class: %.java
+	$(JAVAC) -d $(CLASS_DIR) -classpath $(CLASS_DIR):/usr/share/java/RXTXcomm.jar $(JFLAGS) $<
+
+clean:
+	rm -f *~ *.class core *.bak $(LOCAL_CLASS_DIR)/*class
+	rm -fr $(BUILD_DIR)
