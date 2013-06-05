@@ -20,7 +20,7 @@
 
 PACKAGE      = usdriver
 MAIN         = Usdriver
-VERSION      = 2.0.0
+VERSION      = 2
 TOP_DIR      = ../..
 BUILD_DIR    = ../build
 PACKAGE_PATH = warwick/marsh/ultracam/usdriver

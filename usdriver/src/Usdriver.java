@@ -551,7 +551,7 @@ public class Usdriver extends JFrame {
 	    // Set up basic frame
 	    // If you change the next string, you must change Makefile as well where
 	    // a sed operation changes the version number.
-	    this.setTitle("ULTRASPEC window creator and driver, version 2.0.0");
+	    this.setTitle("ULTRASPEC window creator and driver, version 2");
 	    this.setSize( 800, 400);
 	    
 	    // The basic layout is to have action buttons on the top-left, parameter controls on the top-right, 
@@ -2106,7 +2106,7 @@ public class Usdriver extends JFrame {
 						  JOptionPane.WARNING_MESSAGE);
 		}
 
-		_addToUser(document, userElement, "Program", "ULTRASPEC window creator and driver, version 2.0.0");
+		_addToUser(document, userElement, "Program", "ULTRASPEC window creator and driver, version 2");
 
 		//		_addToUser(document, userElement, "Comment",    _commentText.getText());
 		_addBlankLine(document, userElement);
