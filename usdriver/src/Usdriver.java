@@ -89,7 +89,7 @@ public class Usdriver extends JFrame {
     private static final Telescope[] TELESCOPE_DATA = {
 	new Telescope("ESO3.6", new double[] {23.53, 26.07, 25.83, 25.51, 24.63}, 0.1055, "eso3.6.xml"),
 	new Telescope("NTT",    new double[] {23.53, 26.07, 25.83, 25.51, 24.63}, 0.1055, "ntt.xml"),
-	new Telescope("TNO",    new double[] {22.66, 25.20, 24.96, 24.64, 23.76}, 0.45,    "tno.xml")
+	new Telescope("TNO",    new double[] {22.71, 25.25, 25.01, 24.69, 23.81}, 0.45,    "tno.xml")
     };
 
     // Timing parameters from Vik (units of seconds, or seconds/pixel)
