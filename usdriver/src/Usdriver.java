@@ -989,15 +989,14 @@ public class Usdriver extends JFrame {
      * The application expect an integer number of 0.1 milliseconds
      */
     private int _getExpose() throws Exception {
-
-	// In the case of ULTRACAM, the exposure time is specified in 0.1 milliseconds increments, but
-	// this is too fine, so it is prompted for in terms of milliseconds.
-	// This little program returns the value that must be sent to the servers
-	// In non-expert mode ensure expose is at least 1 (to get round a rare problem where it seems that
-	// the tiny part can be set to zero)
-	expose  = 10*exposeText.getValue() + tinyExposeText.getValue();
-	if(!EXPERT_MODE) expose  = Math.max(1, expose);
-	return expose;
+		// In the case of ULTRACAM, the exposure time is specified in 0.1 milliseconds increments, but
+		// this is too fine, so it is prompted for in terms of milliseconds.
+		// This little program returns the value that must be sent to the servers
+		// In non-expert mode ensure expose is at least 1 (to get round a rare problem where it seems that
+		// the tiny part can be set to zero)
+		expose  = 10*exposeText.getValue() + tinyExposeText.getValue();
+		if(!EXPERT_MODE) expose  = Math.max(1, expose);
+		return expose;
     }
 
     //------------------------------------------------------------------------------------------------------------------------------------------
@@ -2627,7 +2626,7 @@ public class Usdriver extends JFrame {
 		double HCLOCK = lnormal ? HCLOCK_NORM : HCLOCK_AV;
 		
 		// drift mode y/n?
-                boolean isDriftMode = driftModeEnabled.isSelected();
+		boolean isDriftMode = driftModeEnabled.isSelected();
 
 		// Set the readout speed
 		readSpeed = (String) speedChoice.getSelectedItem();
@@ -2635,21 +2634,21 @@ public class Usdriver extends JFrame {
 		double video;		    
 		if(readSpeed.equals("Fast")){
 		    if(lnormal){
-			video = VIDEO_NORM_FAST;
+				video = VIDEO_NORM_FAST;
 		    }else{
-			video = VIDEO_AV_FAST;
+				video = VIDEO_AV_FAST;
 		    }
 		}else if(readSpeed.equals("Medium")){
 		    if(lnormal){
-			video = VIDEO_NORM_MED;
+				video = VIDEO_NORM_MED;
 		    }else{
-			video = VIDEO_AV_MED;
+				video = VIDEO_AV_MED;
 		    }
 		}else if(readSpeed.equals("Slow")){
 		    if(lnormal){
-			video = VIDEO_NORM_SLOW;
+				video = VIDEO_NORM_SLOW;
 		    }else{
-			video = VIDEO_AV_SLOW;
+				video = VIDEO_AV_SLOW;
 		    }
 		}else{
 		    throw new Error("readSpeed = \"" + readSpeed + "\" is unrecognised. Programming error");
@@ -2679,24 +2678,24 @@ public class Usdriver extends JFrame {
 		    ysize[np]  = _singleWindows.getNy(np);
 		}
 		// alternatives for drift mode
-                double dxleft, dxright, dystart, dxsize, dysize;
-                dxleft  = _windowPairs.getXleft(0);
-                dxright = _windowPairs.getXright(0);
-                dystart = _windowPairs.getYstart(0);
-                dxsize = _windowPairs.getNx(0);
-                dysize = _windowPairs.getNy(0);
+		double dxleft, dxright, dystart, dxsize, dysize;
+		dxleft  = _windowPairs.getXleft(0);
+		dxright = _windowPairs.getXright(0);
+		dystart = _windowPairs.getYstart(0);
+		dxsize = _windowPairs.getNx(0);
+		dysize = _windowPairs.getNy(0);
 
 		if(lnormal){
 		    // normal mode convert xstart by ignoring 16 overscan pixels
 		    for(int np=0; np<numEnable; np++){
-                        xstart[np] += 16;
-                    }
+				xstart[np] += 16;
+            }
 		    dxleft += 16;
 		    dxright += 16;
 		}else{
 		    // in avalanche mode, need to swap windows around
 		    for(int np=0; np<numEnable; np++){
-			xstart[np] = FFX - (xstart[np]-1) - (xsize[np]-1);
+				xstart[np] = FFX - (xstart[np]-1) - (xsize[np]-1);
 		    }
 		    dxright = FFX - (dxright-1) - (dxsize-1);
 		    dxleft = FFX - (dxleft-1) - (dxsize-1);
@@ -2705,7 +2704,6 @@ public class Usdriver extends JFrame {
 		    dxright=dxleft;
 		    dxleft=tmp;
 		}
-		    
 
 		// convert timing parameters to seconds
 		double expose_delay = expose*1.0e-4;
@@ -2741,7 +2739,7 @@ public class Usdriver extends JFrame {
 
 		// calculate the yshift, which places windows adjacent to the serial register
 		// edited here to allow >2 windows - SL (18/7/2012)
-                double[] yshift = new double[numEnable];
+        double[] yshift = new double[numEnable];
 		for (int np=0; np<numEnable; np++) yshift[np]=0.0;
                 if(isDriftMode){
                         yshift[0]=(dystart-1.0)*VCLOCK;
@@ -3683,15 +3681,18 @@ public class Usdriver extends JFrame {
 		if(driftModeEnabled.isSelected()){
 		    // 544 and 514 are based on the start pixel of 33,3 (+512) given by Derek, modified to the new output-independent
 		    // coords, 544 becomes 528 15/06/09
+		    // y value of 3 is because bottom two rows are overscan
+		    // x position is synced to middle of the chip, since this drops columns symmetrically from L and R
+		    // y position is synced to row 3, because it can be important to have windows start at chip bottom
 		    _windowPairs.setXleftText( 0,Integer.toString(_syncStart(_windowPairs.getXleft(0),  xbin, 1, 1056, 528)) );
 		    _windowPairs.setXrightText(0,Integer.toString(_syncStart(_windowPairs.getXright(0), xbin, 1, 1056, 528)) );
-		    _windowPairs.setYstartText(0,Integer.toString(_syncStart(_windowPairs.getYstart(0), ybin, 1, 1072, 514)) );
+		    _windowPairs.setYstartText(0,Integer.toString(_syncStart(_windowPairs.getYstart(0), ybin, 1, 1072, 2)) );
 		}else{
 		    // 544 and 514 are based on the start pixel of 33,3 (+512) given by Derek, modified to the new output-independent
 		    // coords, 544 becomes 528 15/06/09
 		    for(int i=0; i<numEnable; i++){
 			_singleWindows.setXstartText(i, Integer.toString(_syncStart(_singleWindows.getXstart(i), xbin, 1,  1056, 528)) );
-			_singleWindows.setYstartText(i, Integer.toString(_syncStart(_singleWindows.getYstart(i), ybin, 1,  1072, 514)) );
+			_singleWindows.setYstartText(i, Integer.toString(_syncStart(_singleWindows.getYstart(i), ybin, 1,  1072, 2)) );
 		    }
 		    // lines up all windows - have disabled this at Thai 2.4m - SL (29/8/2012)
 		    if(!_telescope.name.equals("TNO")){
@@ -3713,10 +3714,10 @@ public class Usdriver extends JFrame {
 
     // Synchronises window so that the binned pixels end at ref and start at ref+1
     private int _syncStart(int start, int bin, int min, int max, int ref){
-	int n = Math.round((float)((ref+1-start))/bin);
-	start = ref + 1 - bin*n;
-	if(start < min) start += bin;
-	if(start > max) start -= bin;
+		int n = Math.round((float)((ref+1-start))/bin);
+		start = ref + 1 - bin*n;
+		if(start < min) start += bin;
+		if(start > max) start -= bin;
 	return start;
     }
 
@@ -3767,13 +3768,13 @@ public class Usdriver extends JFrame {
 		    // 15/06/09
 		    if((529 - _windowPairs.getXleft(0))  % xbin != 0) return false;
 		    if((529 - _windowPairs.getXright(0)) % xbin != 0) return false;
-		    if((515 - _windowPairs.getYstart(0)) % ybin != 0) return false;
+		    if((3 - _windowPairs.getYstart(0)) % ybin != 0) return false;
 		}else{
 		    // Numbers here come from the 33,3 start pixel from Derek + 512, modified to output independent coords
 		    // 15/06/09
 		    for(int i=0; i<numEnable; i++){
 			if((529 - _singleWindows.getXstart(i)) % xbin != 0) return false;
-			if((515 - _singleWindows.getYstart(i)) % ybin != 0) return false;
+			if((3 - _singleWindows.getYstart(i)) % ybin != 0) return false;
 		    }
 		    // returns false if all windows are not at same xstart and Nx - disabled for TNO - SL (29/8/2012)
 		    if(!_telescope.name.equals("TNO")){
