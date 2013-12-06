@@ -992,10 +992,10 @@ public class Usdriver extends JFrame {
 		// In the case of ULTRACAM, the exposure time is specified in 0.1 milliseconds increments, but
 		// this is too fine, so it is prompted for in terms of milliseconds.
 		// This little program returns the value that must be sent to the servers
-		// In non-expert mode ensure expose is at least 1 (to get round a rare problem where it seems that
+		// In non-expert mode ensure expose is at least 7 (to get round a rare problem where it seems that
 		// the tiny part can be set to zero)
 		expose  = 10*exposeText.getValue() + tinyExposeText.getValue();
-		if(!EXPERT_MODE) expose  = Math.max(1, expose);
+		if(!EXPERT_MODE) expose  = Math.max(7, expose);
 		return expose;
     }
 
@@ -3469,7 +3469,7 @@ public class Usdriver extends JFrame {
 		return _getExpose();
 	    } 
 	    catch(Exception e){
-		return 5;
+		return 7;
 	    }
 	}
 
@@ -4076,9 +4076,9 @@ public class Usdriver extends JFrame {
 			}else{
 			    if(_unsavedSettings) _disableAll();
 			    try{
-				tinyExposeText.setText("7");
+				    tinyExposeText.setText("7");
 			    }catch(Exception er){
-				tinyExposeText.setText("7");
+				    tinyExposeText.setText("7");
 			    }
 			}
 			_setEnabledActions();
@@ -4824,7 +4824,7 @@ public class Usdriver extends JFrame {
 			    int n = exposeText.getValue();
 			    if(n == 0)
 				tinyExposeText.setText("7");
-			    expose = 1;
+			    expose = _getExpose();
 
 			} 
 			catch (Exception er) {
