@@ -192,6 +192,8 @@ public class Usdriver extends JFrame {
     private JTextField _peakCounts       = new JTextField("", 7);
     private JTextField _signalToNoise    = new JTextField("", 7);
     private JTextField _signalToNoiseOne = new JTextField("", 7);
+    
+
     private JTextField _exposureTime     = new JTextField("0", 7);
     private JTextField _spaceUsed        = new JTextField("0", 7);
     private JTextField _runNumber        = new JTextField("", 7);
@@ -480,7 +482,7 @@ public class Usdriver extends JFrame {
 	    UIManager.put("ComboBox.font",                 DEFAULT_FONT);
 	    UIManager.put("RadioButtonMenuItem.font",      DEFAULT_FONT);
 	    UIManager.put("RadioButton.font",              DEFAULT_FONT);
-
+        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 	    // Load configuration file
 	    loadConfig();
 
@@ -552,7 +554,7 @@ public class Usdriver extends JFrame {
 	    // If you change the next string, you must change Makefile as well where
 	    // a sed operation changes the version number.
 	    this.setTitle("ULTRASPEC window creator and driver, version 2");
-	    this.setSize( 800, 400);
+	    
 	    
 	    // The basic layout is to have action buttons on the top-left, parameter controls on the top-right, 
 	    // timing information panels on the middle-left, and target info in the middle-right 
@@ -615,21 +617,21 @@ public class Usdriver extends JFrame {
 		JSplitPane infoPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, logPanel, _replyPanel);
 		infoPanel.setBorder(new EmptyBorder(15,15,15,15));
 		
-		addComponent( container, infoPanel, 0, 5,  3, 1, GridBagConstraints.NONE, GridBagConstraints.CENTER);
+		addComponent( container, infoPanel, 0, 5,  4, 1, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 	    }
 
 	    // Horizontal separator across whole GUI to separate essential (above) from nice-to-have (below)
 	    JSeparator hsep = new JSeparator();
 	    hsep.setBackground(SEPARATOR_BACK);
 	    hsep.setForeground(SEPARATOR_FORE);
-	    addComponent( container, hsep, 0, 1,  3, 1, GridBagConstraints.NONE, GridBagConstraints.CENTER);
+	    addComponent( container, hsep, 0, 1,  4, 1, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 	    Dimension hdim = container.getPreferredSize();
 	    hsep.setPreferredSize(new Dimension(hdim.width, SEPARATOR_WIDTH));
 
 	    JSeparator hsep2 = new JSeparator();
 	    hsep2.setBackground(SEPARATOR_BACK);
 	    hsep2.setForeground(SEPARATOR_FORE);
-	    addComponent( container, hsep2, 0, 3,  3, 1, GridBagConstraints.NONE, GridBagConstraints.CENTER);
+	    addComponent( container, hsep2, 0, 3,  4, 1, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 	    hsep2.setPreferredSize(new Dimension(hdim.width, SEPARATOR_WIDTH));
 
 	    // Ensure correct configuration of enabled buttons
@@ -640,6 +642,10 @@ public class Usdriver extends JFrame {
 
 	    // Make the whole GUI visible
 	    pack();
+    System.out.println(_signalToNoiseOne.getColumns());
+    System.out.println(_signalToNoiseOne.getPreferredSize());
+    System.out.println(_signalToNoiseOne.getSize());
+	    this.setSize( 1440, 900);
 	    setVisible(true);
 
 	    // Define timer to provide regular updating of timing information
@@ -3161,6 +3167,7 @@ public class Usdriver extends JFrame {
 	gbc.gridheight = gridheight;
 	gbc.fill       = fill;
 	gbc.anchor     = anchor;
+	gbc.weightx=1.;
 	gbLayout.setConstraints(comp, gbc);
 	cont.add (comp);
     }
@@ -3176,6 +3183,7 @@ public class Usdriver extends JFrame {
 	gbc.gridwidth  = 1;
 	gbc.gridheight = 1;
 	gbc.insets     = new Insets(0,5,0,5);
+	gbc.weightx=1.;
 	gbc.fill       = GridBagConstraints.HORIZONTAL;
 	gbc.anchor     = GridBagConstraints.CENTER;
 	gbLayout.setConstraints(comp, gbc);
