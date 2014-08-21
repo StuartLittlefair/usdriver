@@ -4,3 +4,4 @@ export TRM_JAVA="/usr/local"
 make
 make install
 
+depends on RXTX - http://rxtx.qbang.org
